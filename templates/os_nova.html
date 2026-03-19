@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Nova OS - {{ v["placa"] }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:Arial;margin:30px;background:#f6f7fb}
+    .box{max-width:820px;margin:auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    input,textarea,select,button{width:100%;padding:12px;border-radius:8px;border:1px solid #d7dbe7;font-size:16px}
+    textarea{min-height:110px}
+    button{background:#1b5cff;color:#fff;border:0;margin-top:10px;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .msg{background:#ffe9c9;padding:10px;border-radius:8px;margin-bottom:10px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    .chip{border:1px solid #d7dbe7;background:#f2f4ff;padding:8px 10px;border-radius:999px;cursor:pointer;user-select:none}
+    .chip:hover{filter:brightness(0.97)}
+    @media (max-width:820px){ .grid{grid-template-columns:1fr} }
+    .sec{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Nova OS — {{ v["placa"] }} ({{ v["marca"] }} {{ v["modelo"] }})</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="msg">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="/os/salvar">
+      <input type="hidden" name="placa" value="{{ v['placa'] }}">
+
+      <div class="sec">
+        <h3 style="margin:0 0 10px 0">Cliente</h3>
+        <div class="grid">
+          <input name="nome" placeholder="Nome do cliente">
+          <input name="telefone" placeholder="Telefone">
+        </div>
+        <input name="doc" placeholder="CPF/CNPJ (opcional)" style="margin-top:10px">
+      </div>
+
+      <div class="sec">
+        <h3 style="margin:0 0 10px 0">Dados da OS</h3>
+        <div class="grid">
+          <input name="km" placeholder="KM (ex: 123456)">
+          <input name="valor" placeholder="Valor (ex: 180,00)">
+        </div>
+
+        <div class="grid" style="margin-top:10px">
+          <select name="forma_pgto">
+            <option value="">Forma de pagamento</option>
+            <option>Dinheiro</option>
+            <option>PIX</option>
+            <option>Cartão Débito</option>
+            <option>Cartão Crédito</option>
+            <option>Boleto</option>
+          </select>
+
+          <select name="status">
+            <option value="ABERTA">Status: ABERTA</option>
+            <option value="EM_EXECUCAO">EM_EXECUÇÃO</option>
+            <option value="FINALIZADA">FINALIZADA</option>
+            <option value="CANCELADA">CANCELADA</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3 style="margin:0 0 10px 0">Serviços rápidos</h3>
+        <div class="chips">
+          <div class="chip" onclick="addSvc('Troca de óleo')">Troca de óleo</div>
+          <div class="chip" onclick="addSvc('Filtro de óleo')">Filtro de óleo</div>
+          <div class="chip" onclick="addSvc('Filtro de ar')">Filtro de ar</div>
+          <div class="chip" onclick="addSvc('Alinhamento')">Alinhamento</div>
+          <div class="chip" onclick="addSvc('Balanceamento')">Balanceamento</div>
+          <div class="chip" onclick="addSvc('Pastilhas de freio')">Pastilhas</div>
+          <div class="chip" onclick="addSvc('Discos de freio')">Discos</div>
+          <div class="chip" onclick="addSvc('Revisão geral')">Revisão</div>
+          <div class="chip" onclick="addSvc('Diagnóstico scanner')">Scanner</div>
+        </div>
+
+        <textarea id="servico" name="servico" placeholder="Serviço(s) detalhado(s) (um por linha)"></textarea>
+        <textarea name="obs" placeholder="Observações (opcional)"></textarea>
+      </div>
+
+      <button type="submit">Salvar OS</button>
+    </form>
+
+    <p style="margin-top:12px">
+      <a href="/veiculo/{{ v['placa'] }}">Voltar</a>
+    </p>
+  </div>
+
+<script>
+function addSvc(text){
+  const ta = document.getElementById('servico');
+  const cur = ta.value.trim();
+  if(!cur){
+    ta.value = text;
+  } else {
+    // evita repetir igual
+    const lines = cur.split('\n').map(s=>s.trim().toLowerCase());
+    if(!lines.includes(text.trim().toLowerCase())){
+      ta.value = cur + "\n" + text;
+    }
+  }
+  ta.focus();
+}
+</script>
+</body>
+</html>

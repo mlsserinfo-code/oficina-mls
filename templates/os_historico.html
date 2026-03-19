@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br"> 
+<head>
+  <meta charset="utf-8">
+  <title>Histórico - {{ v["placa"] }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:Arial;margin:30px;background:#f6f7fb}
+    .box{max-width:980px;margin:auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+    th{background:#f2f4ff}
+    a.btn{display:inline-block;padding:10px 12px;border-radius:8px;background:#1b5cff;color:#fff;text-decoration:none}
+    a.btn2{display:inline-block;padding:10px 12px;border-radius:8px;background:#222;color:#fff;text-decoration:none}
+    .muted{color:#666;font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Histórico — {{ v["placa"] }} ({{ v["marca"] }} {{ v["modelo"] }})</h2>
+
+    <p>
+      <a class="btn" href="/os/nova/{{ v['placa'] }}">Nova OS</a>
+      <a class="btn2" href="/veiculo/{{ v['placa'] }}" style="margin-left:8px">Voltar</a>
+    </p>
+
+    {% if rows|length == 0 %}
+      <p>Nenhuma OS cadastrada para esta placa.</p>
+    {% else %}
+      <table>
+        <tr>
+          <th>#</th>
+          <th>Data</th>
+          <th>Cliente</th>
+          <th>KM</th>
+          <th>Serviço</th>
+          <th>Valor</th>
+          <th>Ações</th>
+        </tr>
+        {% for r in rows %}
+        <tr>
+          <td>{{ r["id"] }}<div class="muted">{{ r["status"] or "ABERTA" }}</div></td>
+          <td>{{ r["data"] }}</td>
+          <td>
+            {{ r["cliente_nome"] or "-" }}<br>
+            <span class="muted">{{ r["cliente_tel"] or "" }} {{ r["cliente_doc"] or "" }}</span>
+          </td>
+          <td>{{ r["km"] }}</td>
+          <td style="white-space:pre-line">{{ r["servico"] }}</td>
+          <td>R$ {{ "%.2f"|format(r["valor"] or 0) }}</td>
+          <td>
+            <a class="btn" href="/os/pdf/{{ r['id'] }}">PDF</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+</body>
+</html>

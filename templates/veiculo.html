@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Veículo {{ v["placa"] }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:Arial;margin:30px;background:#f6f7fb}
+    .box{max-width:720px;margin:auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .card{flex:1;min-width:200px;background:#f2f4ff;padding:12px;border-radius:10px}
+    a.btn{display:inline-block;padding:12px 14px;border-radius:8px;background:#1b5cff;color:#fff;text-decoration:none;margin-right:8px}
+    a.btn2{display:inline-block;padding:12px 14px;border-radius:8px;background:#222;color:#fff;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Veículo: {{ v["placa"] }}</h2>
+
+    <div class="row">
+      <div class="card"><b>Marca</b><br>{{ v["marca"] or "-" }}</div>
+      <div class="card"><b>Modelo</b><br>{{ v["modelo"] or "-" }}</div>
+      <div class="card"><b>Ano</b><br>{{ v["ano"] or "-" }}</div>
+      <div class="card"><b>UF</b><br>{{ v["uf"] or "-" }}</div>
+    </div>
+
+    <p style="margin-top:16px">
+      <a class="btn" href="/os/nova/{{ v['placa'] }}">Nova OS</a>
+      <a class="btn2" href="/os/{{ v['placa'] }}">Ver Histórico</a>
+      <a style="margin-left:10px" href="/">Voltar</a>
+    </p>
+  </div>
+</body>
+</html>

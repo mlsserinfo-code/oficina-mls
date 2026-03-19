@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2>Consulta de OS</h2>
+
+  <form method="get" action="/os/lista" style="display:flex; gap:10px; flex-wrap:wrap; align-items:end;">
+    <div style="flex:1; min-width:260px;">
+      <label>Buscar (Placa / Cliente / Modelo / Nº OS)</label>
+      <input name="q" value="{{ q or '' }}" placeholder="Ex: ESS3344 ou DOMINGOS ou 11" />
+    </div>
+
+    <div style="width:220px;">
+      <label>Status</label>
+      <select name="status">
+        <option value="" {% if not status or status=="TODOS" %}selected{% endif %}>Todos</option>
+        <option value="ABERTA" {% if status=="ABERTA" %}selected{% endif %}>ABERTA</option>
+        <option value="FINALIZADA" {% if status=="FINALIZADA" %}selected{% endif %}>FINALIZADA</option>
+        <option value="CANCELADA" {% if status=="CANCELADA" %}selected{% endif %}>CANCELADA</option>
+      </select>
+    </div>
+
+    <button class="btn" type="submit">Pesquisar</button>
+    <a class="btn" href="/os/lista">Limpar</a>
+  </form>
+</div>
+
+<div class="card" style="margin-top:14px;">
+  <h3>Resultados ({{ total or (oss|length) }})</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:70px;">OS</th>
+        <th style="width:170px;">Data</th>
+        <th style="width:110px;">Placa</th>
+        <th>Cliente</th>
+        <th style="width:120px;">Status</th>
+        <th style="text-align:right; width:110px;">Total</th>
+        <th style="width:240px;"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% if oss|length == 0 %}
+        <tr><td colspan="7">Nenhuma OS encontrada.</td></tr>
+      {% else %}
+        {% for o in oss %}
+        <tr>
+          <td><b>{{ o["id"] }}</b></td>
+          <td style="white-space:nowrap;">{{ o["data_entrada"] }}</td>
+          <td>{{ o["placa"] }}</td>
+          <td>{{ o["cliente_nome"] }}</td>
+
+          <td>
+            {% if o["status"] == "ABERTA" %}
+              <span style="color:var(--ok); font-weight:800;">● ABERTA</span>
+            {% elif o["status"] == "FINALIZADA" %}
+              <span style="color:#3b82f6; font-weight:800;">● FINALIZADA</span>
+            {% else %}
+              {{ o["status"] }}
+            {% endif %}
+          </td>
+
+          <td style="text-align:right;">{{ "%.2f"|format(o["total"] or 0) }}</td>
+
+          <td style="text-align:right; width:240px;">
+            <div style="display:flex; gap:6px; justify-content:flex-end;">
+              <a class="btn primary" style="padding:6px 10px; font-size:12px;"
+                 href="{{ url_for('os_editar', ordem_id=o['id']) }}">
+                 Abrir
+              </a>
+
+              <a class="btn" style="padding:6px 10px; font-size:12px;"
+                 target="_blank"
+                 href="{{ url_for('os_pdf', ordem_id=o['id']) }}">
+                 PDF
+              </a>
+
+              <a class="btn" style="padding:6px 10px; font-size:12px;"
+                 href="{{ url_for('os_historico', placa=o['placa']) }}">
+                 Histórico
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+
+  <!-- PAGINAÇÃO (dentro do card, antes do endblock) -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:10px;">
+    <div class="badge">Mostrando {{ oss|length }} de {{ total or (oss|length) }}</div>
+
+    <div style="display:flex; gap:8px; align-items:center;">
+      {% if prev_page %}
+        <a class="btn" href="/os/lista?q={{ (q or '')|urlencode }}&status={{ (status or '')|urlencode }}&page={{ prev_page }}">◀ Anterior</a>
+      {% else %}
+        <span class="btn" style="opacity:.45; cursor:default;">◀ Anterior</span>
+      {% endif %}
+
+      <span class="badge">Página {{ page or 1 }} / {{ pages or 1 }}</span>
+
+      {% if next_page %}
+        <a class="btn" href="/os/lista?q={{ (q or '')|urlencode }}&status={{ (status or '')|urlencode }}&page={{ next_page }}">Próxima ▶</a>
+      {% else %}
+        <span class="btn" style="opacity:.45; cursor:default;">Próxima ▶</span>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

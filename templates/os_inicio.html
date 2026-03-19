@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-h">
+    <h1>Ordem de Serviço</h1>
+    <div class="badge">Entrada pela PLACA</div>
+  </div>
+  <div class="panel-b">
+    <div class="card" style="max-width:520px">
+      <h3 style="margin:0 0 10px 0;">Digite a placa</h3>
+      <form method="post" action="/os/placa">
+        <label>Placa</label>
+        <input name="placa" placeholder="Ex: ESS7E65" autofocus>
+        <div style="height:12px"></div>
+        <button class="btn primary" type="submit">Continuar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ title or "RODAMIL" }}</title>
+
+<style>
+
+/* ===== TEMA ESCURO (PADRÃO MLS) ===== */
+:root{
+  --bg:#081a2b;
+  --panel:#0e2a45;
+  --panel2:#0b2238;
+  --line:#224b72;
+  --text:#e9f1ff;
+  --muted:#aac3e6;
+  --accent:#ffd34d;
+  --ok:#2fe27d;
+
+  --grad1:#123a63;
+  --grad2:#061423;
+
+  --input-bg: rgba(0,0,0,.22);
+  --card-bg: rgba(0,0,0,.14);
+  --table-bg: rgba(0,0,0,.10);
+  --th-bg: rgba(0,0,0,.18);
+  --hover: rgba(255,255,255,.04);
+  --btn-bg: rgba(255,255,255,.06);
+  --btn-bg-hover: rgba(255,255,255,.10);
+}
+
+/* ===== TEMA CLARO MLS (DOURADO IDENTIDADE) ===== */
+body.light{
+  --bg:#e7ecf2;              /* fundo cinza suave */
+  --panel:#f7fafc;           /* painel off-white */
+  --panel2:#eef3f8;
+  --line: rgba(15,23,42,.14);
+  --text:#0f172a;
+  --muted:#475569;
+  --accent:#c89c00;          /* dourado MLS elegante */
+  --ok:#16a34a;
+
+  --grad1:#f7fafc;
+  --grad2:#dbe4ee;
+
+  --input-bg: rgba(15,23,42,.06);
+  --card-bg: rgba(255,255,255,.88);
+  --table-bg: rgba(255,255,255,.92);
+  --th-bg: rgba(15,23,42,.05);
+  --hover: rgba(15,23,42,.04);
+  --btn-bg: rgba(200,156,0,.10);
+  --btn-bg-hover: rgba(200,156,0,.18);
+}
+
+
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 20% 0%, var(--grad1) 0%, var(--bg) 55%, var(--grad2) 100%);
+  color:var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  transition:.25s;
+}
+
+.topbar{
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(14,42,69,.85), rgba(8,26,43,.65));
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+body.light .topbar{
+  background: linear-gradient(180deg, rgba(247,250,252,.98), rgba(238,243,248,.92));
+  border-bottom: 1px solid rgba(15,23,42,.10);
+  box-shadow: 0 8px 18px rgba(15,23,42,.06);
+}
+
+.brand{ font-weight:800; }
+.brand span{ color:var(--accent); }
+
+.nav{ display:flex; align-items:center; gap:10px; }
+
+.nav a{
+  color:var(--text);
+  text-decoration:none;
+  padding:6px 10px;
+  border-radius:8px;
+}
+.nav a:hover{ background:var(--hover); }
+
+.wrap{
+  max-width:1100px;
+  margin:22px auto;
+  padding:0 16px;
+}
+
+.panel{
+  background: linear-gradient(180deg, rgba(14,42,69,.75), rgba(11,34,56,.75));
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.35);
+}
+
+body.light .panel{
+  background: linear-gradient(180deg, rgba(247,250,252,.98), rgba(238,243,248,.98));
+  box-shadow: 0 16px 40px rgba(15,23,42,.10);
+  border: 1px solid rgba(15,23,42,.10);
+}
+
+.panel-h{
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+  display:flex; justify-content:space-between;
+}
+
+.badge{
+  font-size:12px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:6px 10px;
+  border-radius:999px;
+}
+
+.panel-b{ padding:16px; }
+
+.card{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--card-bg);
+  padding:14px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--input-bg);
+  color:var(--text);
+}
+
+.btn{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--btn-bg);
+  color:var(--text);
+  font-weight:700;
+  cursor:pointer;
+}
+.btn:hover{ background:var(--btn-bg-hover); }
+
+.btn.primary{
+  background:rgba(255,211,77,.18);
+  border-color:rgba(255,211,77,.45);
+  color:var(--accent);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+th, td{
+  padding:10px;
+  border-bottom:1px solid var(--line);
+}
+th{ background:var(--th-bg); color:var(--muted); }
+
+.empty{
+  color:var(--muted);
+  padding:14px;
+  border:1px dashed var(--line);
+  border-radius:12px;
+}
+
+/* ===== SWITCH PROFISSIONAL ===== */
+.theme-switch{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.switch{
+  position:relative;
+  display:inline-block;
+  width:46px;
+  height:26px;
+}
+
+.switch input{ display:none; }
+
+.slider{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(255,255,255,.15);
+  border:1px solid var(--line);
+  border-radius:999px;
+  transition:.25s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  height:20px;
+  width:20px;
+  left:3px;
+  top:2px;
+  background:var(--accent);
+  border-radius:50%;
+  transition:.25s;
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+
+input:checked + .slider:before{
+  transform:translateX(20px);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="brand" style="display:flex;align-items:center;gap:12px;">
+  <img src="{{ url_for('static', filename='img/logo_rodamil.png') }}"
+       alt="RODA MIL"
+       style="height:40px;width:auto;border-radius:6px;background:white;padding:4px;">
+  <div>CENTRO AUTOMOTIVO <span> RODAMIL</span></div>
+</div>
+
+
+  <div class="nav">
+    <a href="/">Início</a>
+    <a href="/clientes">Clientes</a>
+    <a href="/os/lista">OS</a>
+
+    <div class="theme-switch">
+      <span id="themeIcon">🌙</span>
+      <label class="switch">
+        <input id="themeToggle" type="checkbox" onchange="toggleTheme()">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+
+<div class="wrap">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div style="display:grid;gap:10px;margin-bottom:14px;">
+        {% for msg in messages %}
+          <div class="card" style="border-color:rgba(255,211,77,.35);">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div>
+
+<script>
+function setTheme(mode){
+  const toggle = document.getElementById("themeToggle");
+
+  if(mode === "light"){
+    document.body.classList.add("light");
+    localStorage.setItem("theme","light");
+    document.getElementById("themeIcon").textContent="☀️";
+    toggle.checked = true;
+  } else {
+    document.body.classList.remove("light");
+    localStorage.setItem("theme","dark");
+    document.getElementById("themeIcon").textContent="🌙";
+    toggle.checked = false;
+  }
+}
+
+function toggleTheme(){
+  const isLight = document.body.classList.contains("light");
+  setTheme(isLight ? "dark" : "light");
+}
+
+(function(){
+  const saved = localStorage.getItem("theme");
+  if(saved === "light") setTheme("light");
+})();
+</script>
+
+</body>
+</html>

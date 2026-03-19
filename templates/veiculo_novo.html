@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-h">
+    <h1>Novo Veículo</h1>
+    <div class="badge">Placa: {{ placa }}</div>
+  </div>
+  <div class="panel-b">
+    <div class="card" style="max-width:720px">
+      <form method="post" action="/veiculo/salvar">
+        <input type="hidden" name="placa" value="{{ placa }}">
+        <div class="row">
+          <div>
+            <label>Marca</label>
+            <input name="marca" placeholder="VW">
+          </div>
+          <div>
+            <label>Modelo</label>
+            <input name="modelo" placeholder="GOL">
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="row">
+          <div>
+            <label>Ano</label>
+            <input name="ano" placeholder="2012">
+          </div>
+          <div>
+            <label>Cor</label>
+            <input name="cor" placeholder="PRATA">
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div style="max-width:240px">
+          <label>UF</label>
+          <input name="uf" placeholder="SP">
+        </div>
+
+        <div style="height:12px"></div>
+        <button class="btn primary" type="submit">Salvar Veículo</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-h">
+    <h1>OS #{{ os.id }} • {{ os.placa }}</h1>
+    <div class="badge">{{ os.cliente_nome }} • {{ os.data_entrada }} • Status: {{ os.status }}</div>
+  </div>
+
+  <div class="panel-b">
+    <div class="grid">
+
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">Incluir item</h3>
+
+        {% if os.status != "ABERTA" %}
+          <div class="empty">OS está <b>{{ os.status }}</b>. Não é possível incluir itens.</div>
+        {% else %}
+          <form method="post" action="/os/item/add">
+            <input type="hidden" name="ordem_id" value="{{ os.id }}">
+
+            <label>Tipo</label>
+            <select name="tipo" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0b2238;color:#ffffff;">
+              <option value="SERVICO">SERVIÇO</option>
+              <option value="PECA">PEÇA</option>
+            </select>
+
+            <div style="height:10px"></div>
+
+            <label>Descrição</label>
+            <input name="descricao" placeholder="Ex: ALINHAMENTO / TROCA ÓLEO / PASTILHA">
+
+            <div style="height:10px"></div>
+
+            <div class="row">
+              <div>
+                <label>Qtd</label>
+                <input name="qtd" value="1">
+              </div>
+              <div>
+                <label>Valor Unit</label>
+                <input name="valor_unit" value="">
+              </div>
+            </div>
+
+            <div style="height:12px"></div>
+            <button class="btn primary" type="submit">Adicionar</button>
+          </form>
+        {% endif %}
+
+        <div style="height:12px"></div>
+        <div class="empty">
+          Veículo: <b>{{ os.marca }} {{ os.modelo }} {{ os.ano }}</b> • Cor: <b>{{ os.cor }}</b> • UF: <b>{{ os.uf }}</b><br>
+          Cliente: <b>{{ os.cliente_nome }}</b> • Tel: <b>{{ os.cliente_tel }}</b>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">Itens</h3>
+
+        {% if itens|length == 0 %}
+          <div class="empty">Nenhum item ainda. Inclua pelo painel ao lado.</div>
+        {% else %}
+          <table>
+            <tr>
+              <th class="idcol">ID</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Qtd</th>
+              <th>V.Unit</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+            {% for it in itens %}
+            <tr>
+              <td class="idcol">{{ it.id }}</td>
+              <td>{{ it.tipo }}</td>
+              <td>{{ it.descricao }}</td>
+              <td>{{ it.qtd }}</td>
+              <td>{{ "%.2f"|format(it.valor_unit) }}</td>
+              <td><b>{{ "%.2f"|format(it.valor_total) }}</b></td>
+              <td style="text-align:right;">
+                {% if os.status == "ABERTA" %}
+                <form method="post" action="/os/item/del" style="margin:0;">
+                  <input type="hidden" name="item_id" value="{{ it.id }}">
+                  <input type="hidden" name="ordem_id" value="{{ os.id }}">
+                  <button class="btn" type="submit">Excluir</button>
+                </form>
+                {% else %}
+                  <span class="muted">travado</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+          <a class="btn" href="/os/pdf/{{ os.id }}" target="_blank">Imprimir PDF</a>
+        </div>
+
+        {% if os.status == "ABERTA" %}
+        <form method="post" action="/os/finalizar" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <input type="hidden" name="ordem_id" value="{{ os.id }}">
+
+          <select name="forma_pagamento" required style="min-width:220px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0b2238;color:#ffffff;">
+            <option value="">-- forma de pagamento --</option>
+            <option value="DINHEIRO">DINHEIRO</option>
+            <option value="DEBITO">DEBITO</option>
+            <option value="CREDITO">CREDITO</option>
+            <option value="PIX">PIX</option>
+            <option value="CHEQUE">CHEQUE</option>
+          </select>
+
+          <button class="btn primary" type="submit">Finalizar OS</button>
+        </form>
+        {% endif %}
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+          <div class="badge" style="display:inline-block;">
+            Total Geral: <b style="color:var(--accent)">{{ "%.2f"|format(total) }}</b>
+          </div>
+          <div class="badge" style="display:inline-block;">
+            Pagamento: <b style="color:var(--accent)">{{ os.forma_pagamento or "-" }}</b>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

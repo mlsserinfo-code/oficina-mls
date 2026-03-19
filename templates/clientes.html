@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-h">
+    <h1>Clientes</h1>
+    <div class="badge">
+      Total: {{ total or 0 }} • Página {{ page or 1 }} / {{ pages or 1 }}
+    </div>
+  </div>
+
+  <div class="panel-b">
+    <div class="grid">
+
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">Novo Cliente</h3>
+        <form method="post" action="/clientes/novo">
+          <div class="row">
+            <div>
+              <label>Nome</label>
+              <input name="nome" required placeholder="Ex: João da Rocha Pinto">
+            </div>
+            <div>
+              <label>Telefone</label>
+              <input name="telefone" placeholder="Ex: (11) 99999-9999">
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="row">
+            <div>
+              <label>Endereço</label>
+              <input name="endereco" placeholder="Rua / Número">
+            </div>
+            <div>
+              <label>Bairro</label>
+              <input name="bairro" placeholder="Bairro">
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div>
+            <label>CPF/CNPJ</label>
+            <input name="cpf" placeholder="Somente números (opcional)">
+          </div>
+
+          <div style="height:12px"></div>
+
+          <button class="btn primary" type="submit">Salvar</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">Lista</h3>
+
+        <!-- BUSCA -->
+        <form method="get" action="/clientes" style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+          <div style="flex:1; min-width:220px;">
+            <label>Buscar (Nome / Telefone / CPF / Endereço / Bairro)</label>
+            <input name="q" value="{{ q or '' }}" placeholder="Ex: DOMINGOS ou 1145 ou ITAU">
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn primary" type="submit">Pesquisar</button>
+            <a class="btn" href="/clientes">Limpar</a>
+          </div>
+        </form>
+
+        <div style="height:12px"></div>
+
+        {% if clientes|length == 0 %}
+          <div class="empty">Nenhum cliente encontrado.</div>
+        {% else %}
+          <table>
+            <tr>
+              <th class="idcol">ID</th>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Bairro</th>
+              <th>CPF/CNPJ</th>
+              <th style="text-align:right; width:200px;">Ações</th>
+            </tr>
+
+            {% for c in clientes %}
+            <tr>
+              <td class="idcol">{{ c.id }}</td>
+              <td>{{ c.nome }}</td>
+              <td>{{ c.telefone }}</td>
+              <td>{{ c.bairro }}</td>
+              <td>{{ c.cpf }}</td>
+              <td style="text-align:right; white-space:nowrap;">
+                <a class="btn primary" style="padding:6px 10px; font-size:12px;"
+                   href="/clientes/editar/{{ c.id }}">Editar</a>
+
+                <form method="post" action="/clientes/excluir" style="display:inline;"
+                      onsubmit="return confirm('Excluir o cliente {{ c.nome }}?');">
+                  <input type="hidden" name="id" value="{{ c.id }}">
+                  <button class="btn" style="padding:6px 10px; font-size:12px;" type="submit">Excluir</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+
+          <!-- PAGINAÇÃO -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:10px;">
+            <div class="badge">Mostrando {{ clientes|length }} de {{ total }}</div>
+
+            <div style="display:flex; gap:8px; align-items:center;">
+              {% if prev_page %}
+                <a class="btn" href="/clientes?q={{ q|urlencode }}&page={{ prev_page }}">◀ Anterior</a>
+              {% else %}
+                <span class="btn" style="opacity:.45; cursor:default;">◀ Anterior</span>
+              {% endif %}
+
+              <span class="badge">Página {{ page }} / {{ pages }}</span>
+
+              {% if next_page %}
+                <a class="btn" href="/clientes?q={{ q|urlencode }}&page={{ next_page }}">Próxima ▶</a>
+              {% else %}
+                <span class="btn" style="opacity:.45; cursor:default;">Próxima ▶</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
